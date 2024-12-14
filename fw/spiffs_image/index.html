@@ -9,10 +9,11 @@
   <script src="bootstrap.bundle.min.js"></script>
   <script src="toast.js"></script>
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-  <title>设置</title>
+  <title>JAC设置</title>
 </head>
 <body>
   <div class='container'>
+    <small id='firmware_version' style='font-size: 0.9rem; color: #495057;'></small>
     <br>
     <hr/>
       <h2>时间设置</h2>
@@ -20,23 +21,47 @@
       <div id="dt_sync_result_box"></div>
 
     <hr/>
-    <h2>休眠设置</h2>
-    <small style='font-size:0.9rem; color: #495057;'>时钟将在设定的时间段内休眠</span></small>
-      <div class='form-group'>
-        <label for='begin'>开始</label>
-        <input type='number' min="0" max="23" value="0" class='form-control' name='begin' placeholder='0-23'>
-      </div>
-      <div class='form-group'>
-        <label for='end'>结束</label>
-        <input type='number' min="0" max="23" value="0" class='form-control' name='end' placeholder='0-23'>
-      </div>
-      <button id="sleep_set" class="btn btn-primary">保存</button>
-      <div id="sleep_set_result"></div>
+    <h2>节能时段</h2>
+    <small style='font-size:0.9rem; color: #495057;'>时钟将在设定的时间段内停止显示</span></small>
+      <form id='form_sleep' target='iframe_sleep'>
+        <div class='form-group'>
+          <label for='begin'>开始</label>
+          <input type='number' min="0" max="23" value="0" class='form-control' name='begin' placeholder='0-23'>
+        </div>
+        <div class='form-group'>
+          <label for='end'>结束</label>
+          <input type='number' min="0" max="23" value="0" class='form-control' name='end' placeholder='0-23'>
+        </div>
+      </form>
+    <button id="sleep_set" class="btn btn-primary">保存</button>
+    <div id="sleep_set_result"></div>
 
     <hr/>
     <h2>其他设置</h2>
     <button id="config_exit" class='btn btn-success btn-block'>退出配置模式</button>
+    <button class='btn btn-primary btn-block' data-toggle="modal" data-target="#upgrade-modal">更新固件</button>
     <button class='btn btn-danger btn-block' data-toggle="modal" data-target="#reset-modal">恢复出厂设置</button>
+
+    <div class="modal fade" id="upgrade-modal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">更新固件</h4>
+        </div>
+
+        <div class="modal-body">
+        <label for="otafile"></label>
+        <input type="file" id="otafile" name="otafile"/>
+        <div id="progress"></div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-primary" data-dismiss="modal">关闭</button>
+          <button id="upgrade" class="btn btn-danger">开始更新</button>
+        </div>
+      </div>
+      </div>
+    </div>
 
     <div class="modal fade" id="reset-modal" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog">
@@ -58,6 +83,6 @@
       <div class='col'>Designed by <a href='https://gitee.com/ieiao'>ieiao</a></div>
     </div>
   </div>
-  <script src="joke.js"></script>
+  <script src="jac.js"></script>
 </body>
 </html>

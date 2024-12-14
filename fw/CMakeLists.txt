@@ -5,4 +5,4 @@ cmake_minimum_required(VERSION 3.5)
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 set(COMPONENTS main partition_table esp_adc nvs_flash u8g2 simple_theme compat)
 
-project(Joke)
+project(JAC)
