@@ -44,9 +44,11 @@ function get_ps()
       var info = xhttp.responseText.split(" ");
       var begin = info[0];
       var end = info[1];
-      var form = document.getElementById('form_sleep');
-      form.begin.value = begin;
-      form.end.value = end;
+      if (begin != end) {
+        var form = document.getElementById('form_sleep');
+        form.begin.value = begin;
+        form.end.value = end;
+      }
     }
   };
   xhttp.open('GET', "/get/ps");
@@ -141,7 +143,7 @@ upgrade_button.addEventListener("click", async () => {
 sleepset_button.addEventListener("click", async () => {
   try {
     var form = document.getElementById('form_sleep');
-    if (form.begin.value < 0 || form.begin.value > 23 || form.end.value < 0 || form.end.value > 23 || form.begin.value == form.end.value) {
+    if (form.begin.value < 0 || form.begin.value > 23 || form.end.value < 0 || form.end.value > 23) {
       var message = "<div id='sleep_alert' class='alert alert-danger alert-dismissible fade show' style='margin:10px;'>";
       message += "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
       message += "<strong>" + "无效的配置" + "</strong></div>";
