@@ -109,10 +109,8 @@ static struct element const primary[] = {
     /* Battery */
     {
         .type    = ELEMENT_TYPE_STRING,
-        .param   = HORI_ALIGN_CENTER,
-        .x       = 1,
+        .x       = 2,
         .y       = 120,
-        .w       = 12,
         .fill    = fill_battery,
         .font    = &u8g2_font_siji_t_6x10,
     },
