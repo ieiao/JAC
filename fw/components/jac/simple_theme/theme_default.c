@@ -64,6 +64,15 @@ static void fill_battery(char *p, void *d)
     }
 }
 
+static const char * const ps_on = "\xee\x84\xa8";
+static void fill_ps(char *p, void *d)
+{
+    struct jac_info *info = (struct jac_info *)d;
+
+    if (info->ps_begin != info->ps_end)
+        memcpy(p, ps_on, 3);
+}
+
 static struct element const primary[] = {
     /* Clear */
     {
@@ -112,6 +121,14 @@ static struct element const primary[] = {
         .x       = 2,
         .y       = 120,
         .fill    = fill_battery,
+        .font    = &u8g2_font_siji_t_6x10,
+    },
+    /* powersaving */
+    {
+        .type    = ELEMENT_TYPE_STRING,
+        .x       = 14,
+        .y       = 120,
+        .fill    = fill_ps,
         .font    = &u8g2_font_siji_t_6x10,
     },
     /* Refresh */
