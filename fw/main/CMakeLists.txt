@@ -1,11 +1,10 @@
 set(srcs
-    "jac.c"
+    "main.c"
 )
 
 idf_component_register(
     SRCS ${srcs}
-    INCLUDE_DIRS "."
-    PRIV_REQUIRES jac esp_adc esp_wifi nvs_flash spiffs
+    PRIV_REQUIRES jac spiffs
 )
 
 spiffs_create_partition_image(storage ../spiffs_image)

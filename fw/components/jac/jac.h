@@ -58,4 +58,6 @@ struct jac_msg {
     uint16_t    d;
 };
 
+void jac(void);
+
 #endif

@@ -1,8 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdbool.h>
-#include "display.h"
+#include <string.h>
 #include "esp_err.h"
 #include "esp_system.h"
 #include "freertos/FreeRTOS.h"
@@ -16,23 +15,22 @@
 #include "esp_mac.h"
 #include "lwip/inet.h"
 #include "nvs_flash.h"
-#include "rx8025t.h"
-#include "u8g2.h"
-#include "jac.h"
-#include "simple_theme.h"
 #include "io.h"
 #include "i2c.h"
+#include "u8g2.h"
+#include "display.h"
 #include "resources.h"
 #include "http_server.h"
 #include "esp_spiffs.h"
+#include "rx8025t.h"
 #include "cw2015.h"
 #include "config.h"
+#include "simple_theme.h"
+#include "jac.h"
 
 static const char *TAG = "JAC";
 
 RTC_DATA_ATTR struct jac_info info;
-QueueHandle_t msg_queue;
-TaskHandle_t msg_task;
 TaskHandle_t config_task;
 u8g2_t u8g2;
 extern struct simple_theme theme_default;
@@ -208,7 +206,7 @@ int jac_config_init()
     };
 
     esp_vfs_spiffs_register(&conf);
-    http_server_start(msg_queue);
+    http_server_start();
 
     return 0;
 }
@@ -233,7 +231,7 @@ void jac_config_process(void)
             wifi_sta_list_t sta_list;
             esp_wifi_ap_get_sta_list(&sta_list);
             if (sta_list.num == 0) {
-                ESP_LOGI(TAG, "Timeout, retting");
+                ESP_LOGI(TAG, "Timeout, resetting");
                 esp_restart();
             }
         }
@@ -259,7 +257,7 @@ bool jac_in_power_saving(void)
     return ret;
 }
 
-void app_main(void)
+void jac(void)
 {
     jac_init();
     jac_status_checking();

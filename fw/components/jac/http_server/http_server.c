@@ -259,7 +259,7 @@ static const httpd_uri_t http_post = {
     .user_ctx = NULL,
 };
 
-int http_server_start(QueueHandle_t q)
+int http_server_start(void)
 {
     esp_err_t res;
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
