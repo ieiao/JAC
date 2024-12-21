@@ -139,11 +139,13 @@ void display_wait_idle(int mode)
     if (gpio_get_level(BUSY_GPIO) == 1) {
         if (mode == WAIT_IDLE_MODE_DEFAULT) {
             gpio_hold_en(PC_GPIO);
+            gpio_hold_en(RESET_GPIO);
             gpio_wakeup_enable(BUSY_GPIO, GPIO_INTR_LOW_LEVEL);
             esp_sleep_enable_gpio_wakeup();
             esp_light_sleep_start();
             gpio_wakeup_disable(BUSY_GPIO);
             gpio_hold_dis(PC_GPIO);
+            gpio_hold_dis(RESET_GPIO);
         } else {
             while(gpio_get_level(BUSY_GPIO) == 1)
                 vTaskDelay(200/portTICK_PERIOD_MS);
