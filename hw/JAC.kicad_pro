@@ -405,8 +405,8 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "Joke.step",
-      "vrml": "Joke.wrl"
+      "step": "JAC.step",
+      "vrml": "JAC.wrl"
     },
     "page_layout_descr_file": ""
   },
