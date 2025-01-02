@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "u8g2.h"
+#include "LunarSolarConverter.h"
 
 enum {
     JAC_WAKEUP_NONE = 0,
@@ -35,7 +36,8 @@ struct jac_info {
     uint16_t            flags;
     struct date_time    dt;
     uint16_t            year_add_value;
-    uint32_t            voltage;
+    Lunar               lunar;
+    uint8_t             lunar_calday;
     uint8_t             soc;
     uint8_t             batt_mark;
     uint8_t             ps_begin;

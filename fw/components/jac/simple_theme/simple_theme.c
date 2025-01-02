@@ -49,6 +49,7 @@ void dispart(struct element const *p, struct jac_info *info)
             break;
         }
 
+        case ELEMENT_TYPE_STRING_2X:
         case ELEMENT_TYPE_STRING: {
                 if (ele->font) {
                     old_font = u8g2->font;
@@ -61,14 +62,25 @@ void dispart(struct element const *p, struct jac_info *info)
                 switch (ele->param) {
                 case HORI_ALIGN_CENTER:
                     width = u8g2_GetUTF8Width(u8g2, ptr);
+                    if (ele->type == ELEMENT_TYPE_STRING_2X)
+                        width <<= 1;
                     if (ele->w > width)
                         x += (ele->w - width) / 2;
                     break;
+
+                case HORI_ALIGN_RIGHT:
+                    width = u8g2_GetUTF8Width(u8g2, ptr);
+                    if (ele->type == ELEMENT_TYPE_STRING_2X)
+                        width <<= 1;
+                    if (ele->w > width)
+                        x += ele->w - width;
+                    break;
+
                 default:
                     break;
                 };
 
-                if (ele->param == DISPLAY_2X)
+                if (ele->type == ELEMENT_TYPE_STRING_2X)
                     u8g2_DrawUTF8X2(u8g2, x, y, ptr);
                 else
                     u8g2_DrawUTF8(u8g2, x, y, ptr);

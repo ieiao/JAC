@@ -26,6 +26,7 @@
 #include "cw2015.h"
 #include "config.h"
 #include "simple_theme.h"
+#include "LunarSolarConverter.h"
 #include "jac.h"
 
 static const char *TAG = "JAC";
@@ -167,7 +168,7 @@ int jac_config_init()
 {
     xTaskCreate(jac_config_task, "config",
                 configMINIMAL_STACK_SIZE + 512, NULL,
-                configMAX_PRIORITIES - 1, &config_task);
+                configMAX_PRIORITIES - 2, &config_task);
 
     config_init();
     esp_netif_init();
@@ -219,6 +220,7 @@ void jac_config_process(void)
     jac_config_init();
 
     dispart(info.theme->config_wait, &info);
+    resources_deinit();
     display_wait_idle(WAIT_IDLE_MODE_LOOP);
     display_powersave(info.u8g2, 2);
     epdm_poweroff();
@@ -256,6 +258,23 @@ bool jac_in_power_saving(void)
     }
 
     return ret;
+}
+
+void jac_get_time(void)
+{
+    Solar solar;
+
+    rx8025t_get_datetime(&info.dt);
+    info.dt.year += info.year_add_value;
+
+    solar.solarYear = info.dt.year;
+    solar.solarMonth = info.dt.month;
+    solar.solarDay = info.dt.day;
+
+    if (info.lunar_calday != info.dt.day) {
+        info.lunar = SolarToLunar(solar);
+        info.lunar_calday = info.dt.day;
+    }
 }
 
 void jac(void)
@@ -296,8 +315,7 @@ void jac(void)
             dispart(info.theme->battery_dead, &info);
             jac_deep_sleep();
         } else if (info.wakeup_cause == JAC_WAKEUP_BUTTON) {
-            rx8025t_get_datetime(&info.dt);
-            info.dt.year += info.year_add_value;
+            jac_get_time();
             if (jac_in_power_saving()) {
                 dispart(info.theme->primary, &info);
                 rx8025t_enable_update_intr();
@@ -317,8 +335,7 @@ void jac(void)
             rx8025t_clear_flag();
             rx8025t_disable_intr();
 
-            rx8025t_get_datetime(&info.dt);
-            info.dt.year += info.year_add_value;
+            jac_get_time();
 
             /* Read SOC immediately after flash, OTA and charger removed. */
             if (info.soc == 0 || info.wakeup_cause == JAC_WAKEUP_CHARGE)

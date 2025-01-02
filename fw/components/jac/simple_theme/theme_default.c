@@ -3,6 +3,7 @@
 
 #include "resources.h"
 #include "simple_theme.h"
+#include "esp_log.h"
 
 static void fill_time(char *p, void *d)
 {
@@ -21,28 +22,37 @@ static void fill_date_weekday(char *p, void *d)
     memcpy(p, (char *)weekday_p2 + (info->dt.week - 1) * 3, 3);
 }
 
-static void fill_date_day(char *p, void *d)
+static void fill_date(char *p, void *d)
 {
     struct jac_info *info = (struct jac_info *)d;
-    sprintf(p, "%02d", info->dt.day);
+    sprintf(p, "%04d/%02d/%02d", info->dt.year,
+            info->dt.month, info->dt.day);
 }
 
-static const char * const month_p1 = "一二三四五六七八九十十一十二";
-static const char * const month_p2 = "月";
-static void fill_date_month(char *p, void *d)
+static const char * const lunar_p1 = "正二三四五六七八九十冬腊";
+static const char * const lunar_p2 = "月";
+static const char * const lunar_p3 = "初十廿三";
+static const char * const lunar_p4 = "一二三四五六七八九十";
+
+static void fill_lunar(char *p, void *d)
 {
     struct jac_info *info = (struct jac_info *)d;
-    switch (info->dt.month) {
-        case 1 ... 10:
-            memcpy(p, (char *)month_p1 + (info->dt.month - 1) * 3, 3);
-            p += 3;
-            break;
-        case 11 ... 12:
-            memcpy(p, (char *)month_p1 + 30 + (info->dt.month - 11) * 6, 6);
-            p += 6;
-            break;
+
+    memcpy(p, (char *)lunar_p1 + (info->lunar.lunarMonth - 1) * 3, 3);
+    p += 3;
+    memcpy(p, (char *)lunar_p2, 3);
+    p += 3;
+    if (info->lunar.lunarDay == 10) {
+        memcpy(p, "初十", 6);
+    } else if (info->lunar.lunarDay == 20) {
+        memcpy(p, "二十", 6);
+    } else if (info->lunar.lunarDay == 30) {
+        memcpy(p, "三十", 6);
+    } else {
+        memcpy(p, (char *)lunar_p3 + (info->lunar.lunarDay / 10) * 3, 3);
+        p += 3;
+        memcpy(p, (char *)lunar_p4 + (info->lunar.lunarDay % 10 - 1) * 3, 3);
     }
-    memcpy(p, month_p2, 3);
 }
 
 static const char * const batt_p1 = "\xee\x89";
@@ -81,53 +91,53 @@ static struct element const primary[] = {
     },
     /* Time */
     {
-        .type    = ELEMENT_TYPE_STRING,
-        .x       = 0,
-        .y       = 92,
+        .type    = ELEMENT_TYPE_STRING_2X,
+        .x       = 20,
+        .y       = 160,
         .fill    = fill_time,
         .font    = &u8g2_font_logisoso62_tn,
     },
     /* Date */
     {
         .type    = ELEMENT_TYPE_STRING,
-        .param   = HORI_ALIGN_CENTER,
-        .x       = 180,
-        .y       = 30,
-        .w       = 70,
+        .param   = HORI_ALIGN_RIGHT,
+        .x       = 300,
+        .y       = 226,
+        .w       = 84,
         .fill    = fill_date_weekday,
-        .font    = &u8g2_font_wqy16_t_gb2312a,
+        .font    = &u8g2_font_myfont,
     },
     {
         .type    = ELEMENT_TYPE_STRING,
-        .param   = HORI_ALIGN_CENTER,
-        .x       = 180,
-        .y       = 76,
-        .w       = 70,
-        .fill    = fill_date_day,
-        .font    = &u8g2_font_logisoso28_tn,
+        .x       = 16,
+        .y       = 230,
+        .fill    = fill_date,
+        .font    = &u8g2_font_logisoso28_tr,
     },
     {
         .type    = ELEMENT_TYPE_STRING,
-        .param   = HORI_ALIGN_CENTER,
-        .x       = 180,
-        .y       = 102,
-        .w       = 70,
-        .fill    = fill_date_month,
-        .font    = &u8g2_font_wqy16_t_gb2312a,
+        .x       = 16,
+        .y       = 262,
+        .fill    = fill_lunar,
+        .font    = &u8g2_font_myfont,
     },
     /* Battery */
     {
-        .type    = ELEMENT_TYPE_STRING,
-        .x       = 2,
-        .y       = 120,
+        .type    = ELEMENT_TYPE_STRING_2X,
+        .param   = HORI_ALIGN_RIGHT,
+        .x       = 300,
+        .y       = 262,
+        .w       = 84,
         .fill    = fill_battery,
         .font    = &u8g2_font_siji_t_6x10,
     },
     /* powersaving */
     {
-        .type    = ELEMENT_TYPE_STRING,
-        .x       = 14,
-        .y       = 120,
+        .type    = ELEMENT_TYPE_STRING_2X,
+        .param   = HORI_ALIGN_RIGHT,
+        .x       = 300,
+        .y       = 262,
+        .w       = 60,
         .fill    = fill_ps,
         .font    = &u8g2_font_siji_t_6x10,
     },
@@ -243,8 +253,8 @@ static struct element const welcome[] = {
         .param  = 1,
         .x      = 0,
         .y      = 0,
-        .w      = 250,
-        .h      = 122,
+        .w      = 400,
+        .h      = 300,
         .ptr    = (uint8_t *)&xbm_jac_p1,
     },
     /* Refresh */
@@ -257,8 +267,8 @@ static struct element const welcome[] = {
         .param  = 1,
         .x      = 0,
         .y      = 0,
-        .w      = 250,
-        .h      = 122,
+        .w      = 400,
+        .h      = 300,
         .ptr    = (uint8_t *)&xbm_jac_p2,
     },
     /* Refresh */
@@ -271,8 +281,8 @@ static struct element const welcome[] = {
         .param  = 1,
         .x      = 0,
         .y      = 0,
-        .w      = 250,
-        .h      = 122,
+        .w      = 400,
+        .h      = 300,
         .ptr    = (uint8_t *)&xbm_jac_p3,
     },
     /* Refresh */
@@ -287,7 +297,7 @@ static void fill_wifi(char *p, void *d)
 {
     struct jac_info *info = (struct jac_info *)d;
 
-    sprintf(p, "Wi-Fi: JAC-%02X%02X", info->mac[4], info->mac[5]);
+    sprintf(p, "Wi-Fi:JAC-%02X%02X", info->mac[4], info->mac[5]);
 }
 
 static struct element const config_wait[] = {
@@ -299,39 +309,32 @@ static struct element const config_wait[] = {
     {
         .type   = ELEMENT_TYPE_BITMAP,
         .param  = 1,
-        .x      = 170,
-        .y      = 10,
+        .x      = 300,
+        .y      = 96,
         .w      = 75,
         .h      = 112,
         .ptr    = (uint8_t *)&xbm_tree,
     },
     {
         .type    = ELEMENT_TYPE_STRING,
-        .x       = 16,
-        .y       = 40,
-        .font    = &u8g2_font_helvR10,
+        .x       = 24,
+        .y       = 130,
+        .font    = &u8g2_font_logisoso28_tr,
         .fill    = fill_wifi,
     },
     {
         .type    = ELEMENT_TYPE_STRING,
-        .x       = 16,
-        .y       = 60,
-        .font    = &u8g2_font_helvR10,
-        .ptr     = (uint8_t *)"IP: 192.168.4.1"
+        .x       = 24,
+        .y       = 170,
+        .font    = &u8g2_font_logisoso28_tr,
+        .ptr     = (uint8_t *)"IP:192.168.4.1"
     },
     {
         .type    = ELEMENT_TYPE_STRING,
-        .x       = 16,
-        .y       = 80,
+        .x       = 24,
+        .y       = 196,
         .font    = &u8g2_font_wqy16_t_gb2312a,
-        .ptr     = (uint8_t *)"连接Wi-Fi"
-    },
-    {
-        .type    = ELEMENT_TYPE_STRING,
-        .x       = 16,
-        .y       = 100,
-        .font    = &u8g2_font_wqy16_t_gb2312a,
-        .ptr     = (uint8_t *)"访问IP地址进行配置"
+        .ptr     = (uint8_t *)"连接Wi-Fi, 访问IP地址进行配置"
     },
     /* Refresh */
     {
@@ -350,19 +353,27 @@ static struct element const battery_dead[] = {
     {
         .type   = ELEMENT_TYPE_BITMAP,
         .param  = 1,
-        .x      = 60,
-        .y      = 26,
+        .x      = 80,
+        .y      = 120,
         .w      = 51,
         .h      = 65,
         .ptr    = (uint8_t *)&xbm_batt_dead,
     },
     {
-        .type    = ELEMENT_TYPE_STRING,
-        .x       = 118,
-        .y       = 70,
+        .type    = ELEMENT_TYPE_STRING_2X,
+        .x       = 158,
+        .y       = 145,
         .font    = &u8g2_font_wqy16_t_gb2312a,
-        .ptr     = (uint8_t *)"电池耗尽!"
+        .ptr     = (uint8_t *)"电池耗尽"
     },
+    {
+        .type    = ELEMENT_TYPE_STRING_2X,
+        .x       = 158,
+        .y       = 185,
+        .font    = &u8g2_font_wqy16_t_gb2312a,
+        .ptr     = (uint8_t *)"请及时充电"
+    },
+
     /* Refresh */
     {
         .type   = ELEMENT_TYPE_ACTION,
@@ -380,16 +391,16 @@ static struct element const powersaving[] = {
     {
         .type   = ELEMENT_TYPE_BITMAP,
         .param  = 1,
-        .x      = 170,
-        .y      = 10,
+        .x      = 300,
+        .y      = 88,
         .w      = 75,
         .h      = 112,
         .ptr    = (uint8_t *)&xbm_tree,
     },
     {
-        .type    = ELEMENT_TYPE_STRING,
+        .type    = ELEMENT_TYPE_STRING_2X,
         .x       = 24,
-        .y       = 70,
+        .y       = 158,
         .font    = &u8g2_font_wqy16_t_gb2312a,
         .ptr     = (uint8_t *)"节能时段已开启"
     },

@@ -160,7 +160,7 @@ static esp_err_t http_post_handler(httpd_req_t *req)
     const esp_partition_t *partition = NULL;
     esp_ota_handle_t update_handle = 0 ;
 
-    ESP_LOGI("upgrade", "content length %d", req->content_len);
+    ESP_LOGI("upgrade", "firmware length %d", req->content_len);
     while (remaining > 0) {
         ret = httpd_req_recv(req, expect_len > 0 ? buf + 512 - expect_len : buf, expect_len > 0 ? expect_len : 512);
         if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
@@ -265,6 +265,7 @@ int http_server_start(void)
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
 
     config.uri_match_fn = httpd_uri_match_wildcard;
+    config.task_priority = configMAX_PRIORITIES - 1;
     res = httpd_start(&http_server, &config);
     if (res != ESP_OK)
         goto out;

@@ -17,16 +17,9 @@
 
 
 #include "u8x8.h"
-#include "esp_log.h"
+#include "simple_theme.h"
 
 /* HINK-E042A13-A0 4.2" B/W EPD */
-
-static const uint8_t u8x8_d_ssd1619a_400x300_HINK_E042A13_A0_swrst_seq[] = {
-    U8X8_START_TRANSFER(),
-    U8X8_C(0x12),
-    U8X8_END_TRANSFER(),
-    U8X8_END()
-};
 
 static const uint8_t u8x8_d_ssd1619a_400x300_HINK_E042A13_A0_init_seq[] = {
     U8X8_START_TRANSFER(),
@@ -59,7 +52,7 @@ static const uint8_t u8x8_d_ssd1619a_refresh_full_init_seq[] = {
     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
-    U8X8_A4(0x0f, 0x0f, 0x0f, 0x0f), U8X8_A(0x00),
+    U8X8_A4(0x14, 0x14, 0x14, 0x14), U8X8_A(0x00),
     U8X8_A4(0x1f, 0x00, 0x00, 0x00), U8X8_A(0x00),
     U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
     U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
@@ -70,21 +63,21 @@ static const uint8_t u8x8_d_ssd1619a_refresh_full_init_seq[] = {
     U8X8_END()
 };
 
-static const uint8_t u8x8_d_ssd1619a_refresh_part_init_seq[] = {
+static const uint8_t u8x8_d_ssd1619a_refresh_quick_init_seq[] = {
     U8X8_START_TRANSFER(),
     U8X8_C(0x32),
-    U8X8_A(0x50), U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+    U8X8_A(0x66), U8X8_A(0x40), U8X8_A(0x00), U8X8_A(0x00),
     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
-    U8X8_A(0xa0), U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+    U8X8_A(0x66), U8X8_A(0x80), U8X8_A(0x00), U8X8_A(0x00),
     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
-    U8X8_A(0x50), U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+    U8X8_A(0x66), U8X8_A(0x40), U8X8_A(0x00), U8X8_A(0x00),
     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
-    U8X8_A(0xa0), U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+    U8X8_A(0x66), U8X8_A(0x80), U8X8_A(0x00), U8X8_A(0x00),
     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+    U8X8_A4(0x14, 0x14, 0x00, 0x00), U8X8_A(0x00),
     U8X8_A4(0x1f, 0x00, 0x00, 0x00), U8X8_A(0x00),
-    U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
     U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
     U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
     U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
@@ -93,6 +86,32 @@ static const uint8_t u8x8_d_ssd1619a_refresh_part_init_seq[] = {
     U8X8_END_TRANSFER(),
     U8X8_END()
 };
+
+
+
+// static const uint8_t u8x8_d_ssd1619a_refresh_part_init_seq[] = {
+//     U8X8_START_TRANSFER(),
+//     U8X8_C(0x32),
+//     U8X8_A(0x50), U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+//     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+//     U8X8_A(0xa0), U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+//     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+//     U8X8_A(0x50), U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+//     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+//     U8X8_A(0xa0), U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+//     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+//     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+//     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+//     U8X8_A4(0x1f, 0x00, 0x00, 0x00), U8X8_A(0x00),
+//     U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
+//     U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
+//     U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
+//     U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
+//     U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
+//     U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
+//     U8X8_END_TRANSFER(),
+//     U8X8_END()
+// };
 
 static const uint8_t u8x8_d_ssd1619a_refresh_4gray_seq1[] = {
     U8X8_START_TRANSFER(),
@@ -107,7 +126,7 @@ static const uint8_t u8x8_d_ssd1619a_refresh_4gray_seq1[] = {
     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
     U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
-    U8X8_A4(0x00, 0x00, 0x00, 0x05), U8X8_A(0x01),
+    U8X8_A4(0x00, 0x00, 0x00, 0x07), U8X8_A(0x01),
     U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
     U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
     U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
@@ -119,6 +138,30 @@ static const uint8_t u8x8_d_ssd1619a_refresh_4gray_seq1[] = {
 };
 
 static const uint8_t u8x8_d_ssd1619a_refresh_4gray_seq2[] = {
+    U8X8_START_TRANSFER(),
+    U8X8_C(0x32),
+    U8X8_A(0x05), U8X8_A(0x00), U8X8_A(0x10), U8X8_A(0x10),
+    U8X8_A(0x10), U8X8_A(0x00), U8X8_A(0x01),
+    U8X8_A(0xa0), U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+    U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+    U8X8_A(0x05), U8X8_A(0x00), U8X8_A(0x05), U8X8_A(0x10),
+    U8X8_A(0x10), U8X8_A(0x00), U8X8_A(0x01),
+    U8X8_A(0xa0), U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+    U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+    U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+    U8X8_A(0x00), U8X8_A(0x00), U8X8_A(0x00),
+    U8X8_A4(0x00, 0x00, 0x00, 0x03), U8X8_A(0x01),
+    U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
+    U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
+    U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
+    U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
+    U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
+    U8X8_A4(0x00, 0x00, 0x00, 0x00), U8X8_A(0x00),
+    U8X8_END_TRANSFER(),
+    U8X8_END()
+};
+
+static const uint8_t u8x8_d_ssd1619a_refresh_4gray_seq3[] = {
     U8X8_START_TRANSFER(),
     U8X8_C(0x32),
     U8X8_A(0x05), U8X8_A(0x00), U8X8_A(0x10), U8X8_A(0x10),
@@ -154,6 +197,13 @@ static const uint8_t u8x8_d_ssd1619a_powersave1_seq[] = {
     U8X8_START_TRANSFER(),
     U8X8_CA(0x22, 0x03),
     U8X8_C(0x20),
+    U8X8_END_TRANSFER(),
+    U8X8_END()
+};
+
+static const uint8_t u8x8_d_ssd1619a_deepsleep_seq[] = {
+    U8X8_START_TRANSFER(),
+    U8X8_CA(0x10, 0x01),
     U8X8_END_TRANSFER(),
     U8X8_END()
 };
@@ -246,14 +296,7 @@ uint8_t u8x8_d_ssd1619a_400x300(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void
 
     case U8X8_MSG_DISPLAY_INIT:
         u8x8_d_helper_display_init(u8x8);
-        u8x8_cad_SendSequence(u8x8, u8x8_d_ssd1619a_400x300_HINK_E042A13_A0_swrst_seq);
-        /* GPIO_E is used as BUSY pin. */
-        while (u8x8->gpio_and_delay_cb(u8x8, U8X8_MSG_GPIO_E, 0, NULL) != 0)
-            u8x8_gpio_Delay(u8x8, U8X8_MSG_DELAY_MILLI, 10);
         u8x8_cad_SendSequence(u8x8, u8x8_d_ssd1619a_400x300_HINK_E042A13_A0_init_seq);
-        /* GPIO_E is used as BUSY pin. */
-        while (u8x8->gpio_and_delay_cb(u8x8, U8X8_MSG_GPIO_E, 0, NULL) != 0)
-            u8x8_gpio_Delay(u8x8, U8X8_MSG_DELAY_MILLI, 10);
         u8x8_cad_SendSequence(u8x8, u8x8_d_ssd1619a_refresh_full_init_seq);
         u8x8_cad_SendSequence(u8x8, u8x8_d_ssd1619a_powersave0_seq);
         break;
@@ -261,8 +304,10 @@ uint8_t u8x8_d_ssd1619a_400x300(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void
     case U8X8_MSG_DISPLAY_SET_POWER_SAVE:
         if (arg_int == 0)
             u8x8_cad_SendSequence(u8x8, u8x8_d_ssd1619a_powersave0_seq);
-        else
+        else if (arg_int == 1)
             u8x8_cad_SendSequence(u8x8, u8x8_d_ssd1619a_powersave1_seq);
+        else if (arg_int == 2)
+            u8x8_cad_SendSequence(u8x8, u8x8_d_ssd1619a_deepsleep_seq);
         break;
     case U8X8_MSG_DISPLAY_SET_FLIP_MODE:
         break;
@@ -271,20 +316,21 @@ uint8_t u8x8_d_ssd1619a_400x300(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void
         break;
     case U8X8_MSG_DISPLAY_REFRESH:
         if (arg_int != refresh_mode) {
-            if (arg_int == 0x01)
-                u8x8_cad_SendSequence(u8x8, u8x8_d_ssd1619a_refresh_part_init_seq);
-            else if (arg_int == 0x11)
-                u8x8_cad_SendSequence(u8x8, u8x8_d_ssd1619a_refresh_4gray_seq1);
-            else if (arg_int == 0x12)
-                u8x8_cad_SendSequence(u8x8, u8x8_d_ssd1619a_refresh_4gray_seq2);
-            else
+            if (arg_int == ACTION_REFRESH_QUICK)
+                u8x8_cad_SendSequence(u8x8, u8x8_d_ssd1619a_refresh_quick_init_seq);
+            else if (arg_int == ACTION_REFRESH_DEFAULT)
                 u8x8_cad_SendSequence(u8x8, u8x8_d_ssd1619a_refresh_full_init_seq);
+            else if (arg_int == ACTION_REFRESH_PART)
+                u8x8_cad_SendSequence(u8x8, u8x8_d_ssd1619a_refresh_full_init_seq);
+            else if (arg_int == ACTION_REFRESH_MODE1)
+                u8x8_cad_SendSequence(u8x8, u8x8_d_ssd1619a_refresh_4gray_seq1);
+            else if (arg_int == ACTION_REFRESH_MODE2)
+                u8x8_cad_SendSequence(u8x8, u8x8_d_ssd1619a_refresh_4gray_seq2);
+            else if (arg_int == ACTION_REFRESH_MODE3)
+                u8x8_cad_SendSequence(u8x8, u8x8_d_ssd1619a_refresh_4gray_seq3);
             refresh_mode = arg_int;
         }
         u8x8_cad_SendSequence(u8x8, u8x8_d_ssd1619a_to_display_seq);
-        /* GPIO_E is used as BUSY pin. */
-        while (u8x8->gpio_and_delay_cb(u8x8, U8X8_MSG_GPIO_E, 0, NULL) != 0)
-            u8x8_gpio_Delay(u8x8, U8X8_MSG_DELAY_MILLI, 10);
         break;
     default:
         return 0;

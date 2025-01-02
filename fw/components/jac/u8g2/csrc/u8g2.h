@@ -3592,7 +3592,6 @@ extern const uint8_t u8g2_font_logisoso26_tf[] U8G2_FONT_SECTION("u8g2_font_logi
 extern const uint8_t u8g2_font_logisoso26_tr[] U8G2_FONT_SECTION("u8g2_font_logisoso26_tr");
 extern const uint8_t u8g2_font_logisoso26_tn[] U8G2_FONT_SECTION("u8g2_font_logisoso26_tn");
 extern const uint8_t u8g2_font_logisoso28_tf[] U8G2_FONT_SECTION("u8g2_font_logisoso28_tf");
-extern const uint8_t u8g2_font_logisoso28_tr[] U8G2_FONT_SECTION("u8g2_font_logisoso28_tr");
 extern const uint8_t u8g2_font_logisoso30_tf[] U8G2_FONT_SECTION("u8g2_font_logisoso30_tf");
 extern const uint8_t u8g2_font_logisoso30_tr[] U8G2_FONT_SECTION("u8g2_font_logisoso30_tr");
 extern const uint8_t u8g2_font_logisoso30_tn[] U8G2_FONT_SECTION("u8g2_font_logisoso30_tn");

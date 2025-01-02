@@ -111,7 +111,7 @@ void u8x8_RefreshDisplayM(u8x8_t *u8x8, uint8_t v)
 
 void display_init(u8g2_t *u8g2)
 {
-    u8g2_Setup_il3895_122x250_f(u8g2, &u8g2_cb_r1, u8g2_esp32_spi_byte_cb, u8g2_esp32_gpio_and_delay_cb);
+    u8g2_Setup_ssd1619a_400x300_f(u8g2, &u8g2_cb_r0, u8g2_esp32_spi_byte_cb, u8g2_esp32_gpio_and_delay_cb);
     u8x8_InitDisplay(u8g2_GetU8x8(u8g2));
     u8g2_SetDrawColor(u8g2, 0);
     u8g2_SetFont(u8g2, u8g2_font_wqy16_t_gb2312a);
