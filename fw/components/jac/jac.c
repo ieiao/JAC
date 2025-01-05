@@ -131,6 +131,7 @@ static void jac_config_task(void *pvParameters)
                 cw2015_write_athd(5);
             }
             config_set(KEY_CONFIGURED, 1);
+            config_set(KEY_YEAR_ADD, info.year_add_value / 100);
             info.flags |= JAC_FLAG_CONFIGURED;
         }
 
@@ -165,7 +166,7 @@ static void jac_config_task(void *pvParameters)
 int jac_config_init()
 {
     xTaskCreate(jac_config_task, "config",
-                configMINIMAL_STACK_SIZE, NULL,
+                configMINIMAL_STACK_SIZE + 512, NULL,
                 configMAX_PRIORITIES - 1, &config_task);
 
     config_init();

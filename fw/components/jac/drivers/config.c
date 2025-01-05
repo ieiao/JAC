@@ -75,6 +75,14 @@ int __config_load(struct jac_info *info)
 
     info->ps_end = out_value;
 
+    ret = nvs_get_u8(handle, KEY_YEAR_ADD, &out_value);
+    if (ret != ESP_OK) {
+        /* PS_BEGIN and PS_END will setting by same time. */
+        goto out;
+    }
+
+    info->year_add_value = out_value * 100;
+
 out:
     return ret;
 }

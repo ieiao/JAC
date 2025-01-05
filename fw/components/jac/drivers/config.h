@@ -4,6 +4,7 @@
 #define KEY_CONFIGURED      "k1"
 #define KEY_PS_BEGIN        "k2"
 #define KEY_PS_END          "k3"
+#define KEY_YEAR_ADD        "k4"
 
 int config_init(void);
 void config_deinit(void);
