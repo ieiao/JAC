@@ -161,6 +161,10 @@ static esp_err_t http_post_handler(httpd_req_t *req)
     esp_ota_handle_t update_handle = 0 ;
 
     ESP_LOGI("upgrade", "firmware length %d", req->content_len);
+
+    xTaskGenericNotify(config_task, tskDEFAULT_INDEX_TO_NOTIFY, 0x08, eSetBits, NULL);
+    vTaskDelay(pdMS_TO_TICKS(100));
+
     while (remaining > 0) {
         ret = httpd_req_recv(req, expect_len > 0 ? buf + 512 - expect_len : buf, expect_len > 0 ? expect_len : 512);
         if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
