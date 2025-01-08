@@ -113,6 +113,13 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
     }
 }
 
+esp_vfs_spiffs_conf_t conf = {
+    .base_path = "/spiffs",
+    .partition_label = NULL,
+    .max_files = 10,
+    .format_if_mount_failed = true
+};
+
 static void jac_config_task(void *pvParameters)
 {
     while(1) {
@@ -150,6 +157,12 @@ static void jac_config_task(void *pvParameters)
                 cw2015_deepsleep();
             config_erase();
             esp_restart();
+        }
+
+        /* OTA prepare */
+        if (v & 0x08) {
+            resources_deinit();
+            esp_vfs_spiffs_unregister(conf.partition_label);
         }
 
         /* Reset */
@@ -198,13 +211,6 @@ int jac_config_init()
     char ip_addr[16];
     inet_ntoa_r(ip_info.ip.addr, ip_addr, 16);
     ESP_LOGI(TAG, "Set up softAP with IP: %s", ip_addr);
-
-    esp_vfs_spiffs_conf_t conf = {
-        .base_path = "/spiffs",
-        .partition_label = NULL,
-        .max_files = 10,
-        .format_if_mount_failed = true
-    };
 
     esp_vfs_spiffs_register(&conf);
     http_server_start();
