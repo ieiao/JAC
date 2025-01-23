@@ -60,9 +60,9 @@ int __config_load(struct jac_info *info)
     if (ret == ESP_ERR_NVS_NOT_FOUND) {
         /* Not set this function, just return. */
         ret = 0;
-        goto out;
+        goto get_add;
     } else if (ret != ESP_OK) {
-        goto out;
+        goto get_add;
     }
 
     info->ps_begin = out_value;
@@ -70,11 +70,12 @@ int __config_load(struct jac_info *info)
     ret = nvs_get_u8(handle, KEY_PS_END, &out_value);
     if (ret != ESP_OK) {
         /* PS_BEGIN and PS_END will setting by same time. */
-        goto out;
+        goto get_add;
     }
 
     info->ps_end = out_value;
 
+get_add:
     ret = nvs_get_u8(handle, KEY_YEAR_ADD, &out_value);
     if (ret != ESP_OK) {
         /* PS_BEGIN and PS_END will setting by same time. */
