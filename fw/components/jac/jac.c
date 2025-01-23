@@ -87,8 +87,10 @@ void jac_status_checking(void)
     info.wakeup_cause = get_wakeup_cause();
 
     /* Load config when first boot or after flash. */
-    if (!(info.flags & JAC_FLAG_CONFIGURED) || info.wakeup_cause == JAC_WAKEUP_NONE)
+    if (!(info.flags & JAC_FLAG_CONFIGURED) || info.wakeup_cause == JAC_WAKEUP_NONE) {
+        ESP_LOGI(TAG, "config load");
         config_load(&info);
+    }
 }
 
 void jac_deep_sleep(void)
