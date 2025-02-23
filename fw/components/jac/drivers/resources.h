@@ -2,6 +2,7 @@
 #define __RESOURCES_H__
 
 int resources_init(void);
+void resources_deinit(void);
 
 extern const uint8_t *u8g2_font_logisoso62_tn;
 extern const uint8_t *u8g2_font_logisoso28_tn;

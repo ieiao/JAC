@@ -266,6 +266,17 @@ bool jac_in_power_saving(void)
     return ret;
 }
 
+void jac_battdead(void)
+{
+    uint8_t alert;
+    cw2015_read_alrt(&alert);
+    info.flags |= JAC_FLAG_BATTDEAD;
+    rx8025t_disable_intr();
+    rx8025t_clear_flag();
+    dispart(info.theme->battery_dead, &info);
+    jac_deep_sleep();
+}
+
 void jac(void)
 {
     jac_init();
@@ -296,13 +307,7 @@ void jac(void)
         }
     } else {
         if (info.wakeup_cause == JAC_WAKEUP_BATT_ALRT) {
-            uint8_t alert;
-            cw2015_read_alrt(&alert);
-            info.flags |= JAC_FLAG_BATTDEAD;
-            rx8025t_disable_intr();
-            rx8025t_clear_flag();
-            dispart(info.theme->battery_dead, &info);
-            jac_deep_sleep();
+            jac_battdead();
         } else if (info.wakeup_cause == JAC_WAKEUP_BUTTON) {
             rx8025t_get_datetime(&info.dt);
             info.dt.year += info.year_add_value;
@@ -318,8 +323,11 @@ void jac(void)
             uint8_t flag;
 
             if (info.flags & JAC_FLAG_BATTDEAD &&
-                info.wakeup_cause == JAC_WAKEUP_CHARGE)
+                info.wakeup_cause == JAC_WAKEUP_CHARGE) {
                 info.flags &= ~JAC_FLAG_BATTDEAD;
+                /* Set ATHD to 1 to avoid frequent ATHD interrupts */
+                cw2015_write_athd(1);
+            }
 
             rx8025t_read_flag(&flag);
             rx8025t_clear_flag();
@@ -333,12 +341,22 @@ void jac(void)
                 cw2015_read_soc(&info.soc);
 
             /* Read SOC every 30 minutes */
-            if ((info.dt.minutes % 30) == 0) {
+            if (((info.dt.minutes % 30) == 0) || (info.flags & JAC_FLAG_CHARGING)) {
                 uint8_t soc;
                 cw2015_read_soc(&soc);
                 /* Only allow new soc greater than old soc when it's charging. */
                 if (soc > info.soc && info.flags & JAC_FLAG_CHARGING)
                     info.soc = soc;
+            }
+
+            uint8_t athd;
+            cw2015_read_athd(&athd);
+            /* charging plug in and then plug out, soc still less than or equal to athd,
+             * JAC just into battdead mode. */
+            if ((athd != 5) && (info.soc <= 5) && (info.flags & JAC_FLAG_CHARGING) == 0) {
+                /* Restore athd value if not charging */
+                cw2015_write_athd(5);
+                jac_battdead();
             }
 
             if (jac_in_power_saving()) {

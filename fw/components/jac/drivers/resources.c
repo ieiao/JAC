@@ -74,3 +74,8 @@ int resources_init(void)
 out:
     return ret;
 }
+
+void resources_deinit(void)
+{
+    munmap_data_partition(res_partition_handle);
+}
